@@ -1,6 +1,8 @@
 package com.udacity.jwdnd.c1.cloudstorage.controllers;
 
+import com.udacity.jwdnd.c1.cloudstorage.models.User;
 import com.udacity.jwdnd.c1.cloudstorage.services.FileService;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,8 +20,9 @@ public class FileStorageController {
     }
 
     @PostMapping
-    public String upload(@RequestParam("fileUpload") MultipartFile file) {
-        fileService.save(file);
+    public String upload(@RequestParam("fileUpload") MultipartFile file, Authentication auth) {
+        Integer userId = ((User) auth.getPrincipal()).getUserId();
+        fileService.save(file, userId);
         return "/home";
     }
 }

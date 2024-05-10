@@ -1,23 +1,32 @@
 package com.udacity.jwdnd.c1.cloudstorage.services;
 
+import com.udacity.jwdnd.c1.cloudstorage.models.File;
+import com.udacity.jwdnd.c1.cloudstorage.orm.FileMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Service
 public class FileService {
 
-    public void save(MultipartFile file) {
-        String dir = System.getProperty("user.dir") + "/upload";
+    private final FileMapper fileMapper;
+
+    public FileService(FileMapper fileMapper) {
+        this.fileMapper = fileMapper;
+    }
+
+    public void save(MultipartFile file, Integer userId) {
         try {
-            // create directory if not exists
-            Files.createDirectories(Paths.get(dir));
-            // save file
-            file.transferTo(new File(dir + "/" + file.getOriginalFilename()));
+            // save file into database
+            fileMapper.insert(new File(
+                    null,
+                    file.getOriginalFilename(),
+                    file.getContentType(),
+                    file.getSize(),
+                    userId,
+                    file.getBytes()
+            ));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
