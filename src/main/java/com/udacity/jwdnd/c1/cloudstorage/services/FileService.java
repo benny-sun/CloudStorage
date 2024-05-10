@@ -7,6 +7,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.nio.file.FileAlreadyExistsException;
+import java.util.List;
 
 @Service
 public class FileService {
@@ -35,4 +36,7 @@ public class FileService {
         ));
     }
 
+    public List<File> getFiles(Integer userId) {
+        return fileMapper.getFiles(userId);
+    }
 }
