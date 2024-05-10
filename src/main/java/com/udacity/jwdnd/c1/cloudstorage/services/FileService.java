@@ -39,4 +39,8 @@ public class FileService {
     public List<File> getFiles(Integer userId) {
         return fileMapper.getFiles(userId);
     }
+
+    public File getFile(Integer fileId, Integer userId) {
+        return fileMapper.getFile(fileId, userId);
+    }
 }
