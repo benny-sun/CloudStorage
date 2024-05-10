@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.FileAlreadyExistsException;
 
 @Service
 public class FileService {
@@ -16,20 +17,22 @@ public class FileService {
         this.fileMapper = fileMapper;
     }
 
-    public void save(MultipartFile file, Integer userId) {
-        try {
-            // save file into database
-            fileMapper.insert(new File(
-                    null,
-                    file.getOriginalFilename(),
-                    file.getContentType(),
-                    file.getSize(),
-                    userId,
-                    file.getBytes()
-            ));
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+    public void save(MultipartFile file, Integer userId) throws IOException {
+        // check if file existed then stop saving
+        boolean isFileExisted = fileMapper.isExistedBy(file.getOriginalFilename(), userId);
+        if (isFileExisted) {
+            throw new FileAlreadyExistsException(file.getOriginalFilename());
         }
+
+        // save file into database
+        fileMapper.insert(new File(
+                null,
+                file.getOriginalFilename(),
+                file.getContentType(),
+                file.getSize(),
+                userId,
+                file.getBytes()
+        ));
     }
 
 }

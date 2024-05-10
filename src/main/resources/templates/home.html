@@ -192,6 +192,15 @@
 
         <!--For opening the note modal-->
         <script type="text/javascript">
+
+            $(document).ready(function(){
+                // Automatic switch nav-tag through detecting url anchor
+                let anchor = window.location.hash;
+                if(anchor){
+                    $('.nav-tabs a[href="' + anchor + '"]').tab('show');
+                }
+            });
+
             // For opening the note modal
             function showNoteModal(noteId, noteTitle, noteDescription) {
                 $('#note-id').val(noteId ? noteId : '');
