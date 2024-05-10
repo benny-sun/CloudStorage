@@ -1,7 +1,5 @@
 package com.udacity.jwdnd.c1.cloudstorage.models;
 
-import java.io.IOException;
-
 public class File {
     private final Integer fileId;
     private final String filename;
@@ -10,7 +8,7 @@ public class File {
     private final Integer userId;
     private final byte[] fileData;
 
-    public File(Integer fileId, String filename, String contentType, Long filesize, Integer userId, byte[] fileData) throws IOException {
+    public File(Integer fileId, String filename, String contentType, Long filesize, Integer userId, byte[] fileData) {
         this.fileId = fileId;
         this.filename = filename;
         this.contentType = contentType;
