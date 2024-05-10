@@ -35,7 +35,7 @@ create table files
     contenttype varchar(20)  null,
     filesize    varchar(12)  null,
     userid      int          null,
-    filedata    blob         null,
+    filedata    mediumblob   null,
     constraint files_ibfk_1
         foreign key (userid) references users (userid)
 );
