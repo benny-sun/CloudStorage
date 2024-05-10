@@ -32,7 +32,7 @@ create table files
     fileId      int auto_increment
         primary key,
     filename    varchar(128) null,
-    contenttype varchar(20)  null,
+    contenttype varchar(128)  null,
     filesize    varchar(12)  null,
     userid      int          null,
     filedata    mediumblob   null,
