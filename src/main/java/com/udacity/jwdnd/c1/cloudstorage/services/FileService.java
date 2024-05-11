@@ -43,4 +43,8 @@ public class FileService {
     public File getFile(Integer fileId, Integer userId) {
         return fileMapper.getFile(fileId, userId);
     }
+
+    public int deleteFile(Integer fileId, Integer userId) {
+        return fileMapper.delete(fileId, userId);
+    }
 }

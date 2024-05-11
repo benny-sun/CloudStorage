@@ -69,4 +69,14 @@ public class FileStorageController {
 
         return new ResponseEntity<byte[]>(file.getFileData(), headers, HttpStatus.CREATED);
     }
+
+    @DeleteMapping("/{fileId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+            @PathVariable("fileId") Integer fileId,
+            Authentication auth
+    ) {
+        Integer userId = ((User) auth.getPrincipal()).getUserId();
+        fileService.deleteFile(fileId,userId);
+    }
 }
