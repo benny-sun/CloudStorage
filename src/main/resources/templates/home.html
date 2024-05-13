@@ -75,13 +75,13 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr>
+                                    <tr th:each="note: ${notes}">
                                         <td>
-                                            <button type="button" class="btn btn-success">Edit</button>
+                                            <button type="button" class="btn btn-success" th:attr="data-noteId=${note.noteId}, data-noteTitle=${note.noteTitle}, data-noteDescription=${note.noteDescription}" onclick="showNoteModal(this)">Edit</button>
                                             <a class="btn btn-danger">Delete</a>
                                         </td>
-                                        <th scope="row">Example Note Title</th>
-                                        <td>Example Note Description </td>
+                                        <th scope="row" th:text="${note.noteTitle}"></th>
+                                        <td th:text="${note.noteDescription}"></td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -235,10 +235,13 @@
             }
 
             // For opening the note modal
-            function showNoteModal(noteId, noteTitle, noteDescription) {
-                $('#note-id').val(noteId ? noteId : '');
-                $('#note-title').val(noteTitle ? noteTitle : '');
-                $('#note-description').val(noteDescription ? noteDescription : '');
+            function showNoteModal(button) {
+                let noteId = button ? button.getAttribute('data-noteId') : '';
+                let noteTitle = button ? button.getAttribute('data-noteTitle') : '';
+                let noteDescription = button ? button.getAttribute('data-noteDescription') : '';
+                $('#note-id').val(noteId);
+                $('#note-title').val(noteTitle);
+                $('#note-description').val(noteDescription);
                 $('#noteModal').modal('show');
             }
 
