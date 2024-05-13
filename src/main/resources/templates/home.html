@@ -157,7 +157,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST" th:action="@{/credentials}">
+                                        <form id="credential-form" action="#" method="POST" th:action="@{/credentials}">
                                             <input type="hidden" name="credentialId" id="credential-id">
                                             <div class="form-group">
                                                 <label for="credential-url" class="col-form-label">URL</label>
@@ -205,7 +205,19 @@
                     event.preventDefault();
                     let noteId = $('#note-id').val();
                     if (noteId !== '') {
-                        $(this).attr('action', '/notes/' + noteId);
+                        let target = $(this).attr('action') + '/' + noteId;
+                        $(this).attr('action', target);
+                    }
+                    $(this).off('submit').submit();
+                });
+
+                // credential form submit listener
+                $('#credential-form').submit(function(event) {
+                    event.preventDefault();
+                    let credentialId = $('#credential-id').val();
+                    if (credentialId !== '') {
+                        let target = $(this).attr('action') + '/' + credentialId;
+                        $(this).attr('action', target);
                     }
                     $(this).off('submit').submit();
                 });

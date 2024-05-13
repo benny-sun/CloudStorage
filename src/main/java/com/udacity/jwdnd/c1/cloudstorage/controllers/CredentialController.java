@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
@@ -42,4 +43,25 @@ public class CredentialController {
         return "result";
     }
 
+    @PostMapping("/{credentialId}")
+    public String update(
+            @ModelAttribute Credential credential,
+            Authentication auth,
+            Model model
+    ) {
+        String errorMessage = null;
+
+        Integer userId = ((User) auth.getPrincipal()).getUserId();
+        credential.setUserId(userId);
+        int effectedRows = credentialService.update(credential);
+
+        if (effectedRows != 1) {
+            errorMessage = "Something went wrong. Please try again.";
+        }
+
+        model.addAttribute("anchor", "nav-credentials");
+        model.addAttribute("errorMessage", errorMessage);
+
+        return "result";
+    }
 }

@@ -54,4 +54,12 @@ public class Credential {
     public void setDecodedPassword(String decodedPassword) {
         this.decodedPassword = decodedPassword;
     }
+
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

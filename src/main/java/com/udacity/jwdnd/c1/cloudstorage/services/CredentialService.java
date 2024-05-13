@@ -40,4 +40,12 @@ public class CredentialService {
         ));
     }
 
+    public int update(Credential credential) {
+        String secureKey = keyService.generateSecureKey();
+        String encryptedPassword = encryptionService.encryptValue(credential.getPassword(), secureKey);
+        credential.setKey(secureKey);
+        credential.setPassword(encryptedPassword);
+
+        return credentialMapper.update(credential);
+    }
 }
