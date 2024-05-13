@@ -52,7 +52,7 @@
                                 <tr th:each="file: ${files}">
                                     <td>
                                         <a target="_blank" class="btn btn-success" th:href="@{'/files/' + ${file.fileId}}">View</a>
-                                        <a  class="btn btn-danger" data-method="delete" th:href="@{'/files/' + ${file.fileId}}" onclick="deleteItem(event)">Delete</a>
+                                        <a  class="btn btn-danger" data-tab="nav-files" data-method="delete" th:href="@{'/files/' + ${file.fileId}}" onclick="deleteItem(event)">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${file.filename}"></th>
                                 </tr>
@@ -78,7 +78,7 @@
                                     <tr th:each="note: ${notes}">
                                         <td>
                                             <button type="button" class="btn btn-success" th:attr="data-noteId=${note.noteId}, data-noteTitle=${note.noteTitle}, data-noteDescription=${note.noteDescription}" onclick="showNoteModal(this)">Edit</button>
-                                            <a class="btn btn-danger">Delete</a>
+                                            <a class="btn btn-danger" data-tab="nav-notes" data-method="delete" th:href="@{'/notes/' + ${note.noteId}}" onclick="deleteItem(event)">Delete</a>
                                         </td>
                                         <th scope="row" th:text="${note.noteTitle}"></th>
                                         <td th:text="${note.noteDescription}"></td>
@@ -220,10 +220,8 @@
 
                 let url = event.target.href; // get url path
                 let method = event.target.getAttribute('data-method'); // get http method
+                let tabName = event.target.getAttribute('data-tab'); // get current modal tab
                 let csrfToken = document.querySelector('input[name="_csrf"]').value; // get CSRF token
-
-                console.log(url);
-                console.log(method);
 
                 if (method.toLowerCase() === 'delete') {
                     let xhr = new XMLHttpRequest(); // create XMLHttpRequest object
@@ -234,7 +232,8 @@
                         if (xhr.readyState === 4) { // request done
                             if (xhr.status === 200 || xhr.status === 202 || xhr.status === 204) { // if succeed
                                 console.log('Item deleted successfully');
-                                location.reload()
+                                location.hash = tabName;
+                                location.reload();
                             } else { // if failed
                                 alert('Failed to delete item');
                             }
