@@ -134,14 +134,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                <tr>
+                                <tr th:each="credential: ${credentials}">
                                     <td>
-                                        <button type="button" class="btn btn-success">Edit</button>
+                                        <button type="button" class="btn btn-success" th:attr="data-credentialId=${credential.credentialId}, data-url=${credential.url}, data-username=${credential.username}, data-password=${credential.decodedPassword}" onclick="showCredentialModal(this)">Edit</button>
                                         <a class="btn btn-danger">Delete</a>
                                     </td>
-                                    <th scope="row">Example Credential URL</th>
-                                    <td>Example Credential Username</td>
-                                    <td>Example Credential Password</td>
+                                    <th scope="row" th:text="${credential.url}"></th>
+                                    <td th:text="${credential.username}"></td>
+                                    <td th:text="${credential.password}"></td>
                                 </tr>
                                 </tbody>
                             </table>
@@ -255,11 +255,15 @@
             }
 
             // For opening the credentials modal
-            function showCredentialModal(credentialId, url, username, password) {
-                $('#credential-id').val(credentialId ? credentialId : '');
-                $('#credential-url').val(url ? url : '');
-                $('#credential-username').val(username ? username : '');
-                $('#credential-password').val(password ? password : '');
+            function showCredentialModal(button) {
+                let credentialId = button ? button.getAttribute('data-credentialId') : '';
+                let url = button ? button.getAttribute('data-url') : '';
+                let username = button ? button.getAttribute('data-username') : '';
+                let password = button ? button.getAttribute('data-password') : '';
+                $('#credential-id').val(credentialId);
+                $('#credential-url').val(url);
+                $('#credential-username').val(username);
+                $('#credential-password').val(password);
                 $('#credentialModal').modal('show');
             }
         </script>
