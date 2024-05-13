@@ -97,7 +97,7 @@
                                         </button>
                                     </div>
                                     <div class="modal-body">
-                                        <form action="#" method="POST" th:action="@{/notes}">
+                                        <form id="note-form" action="#" method="POST" th:action="@{/notes}">
                                             <input type="hidden" name="noteId" id="note-id">
                                             <div class="form-group">
                                                 <label for="note-title" class="col-form-label">Title</label>
@@ -199,6 +199,16 @@
                 if(anchor){
                     $('.nav-tabs a[href="' + anchor + '"]').tab('show');
                 }
+
+                // note form submit listener
+                $('#note-form').submit(function(event) {
+                    event.preventDefault();
+                    let noteId = $('#note-id').val();
+                    if (noteId !== '') {
+                        $(this).attr('action', '/notes/' + noteId);
+                    }
+                    $(this).off('submit').submit();
+                });
             });
 
             function deleteItem(event) {
