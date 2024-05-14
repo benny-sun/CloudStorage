@@ -39,7 +39,7 @@ public class SecurityConfig {
             )
             .formLogin(formLogin -> formLogin
                 .loginPage("/login")
-                .defaultSuccessUrl("/home")
+                .defaultSuccessUrl("/home", true)
                 .failureHandler(new SimpleUrlAuthenticationFailureHandler() {
                     @Override
                     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
