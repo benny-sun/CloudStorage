@@ -20,6 +20,10 @@
                 <div class="alert alert-dark" th:if="${param.logout}">
                     You have been logged out
                 </div>
+<!--                if signup success-->
+                <div id="success-msg" class="alert alert-success" th:if="${signupSuccess}">
+                    You successfully signed up! Please continue to login.
+                </div>
                 <div class="form-group">
                     <label for="inputUsername">Username</label>
                     <input type="text" class="form-control" name="username" id="inputUsername" placeholder="Enter Username" maxlength="20" required>
