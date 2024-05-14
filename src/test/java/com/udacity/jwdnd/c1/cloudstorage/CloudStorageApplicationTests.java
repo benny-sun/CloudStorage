@@ -202,4 +202,28 @@ class CloudStorageApplicationTests {
 		}
 		Assertions.assertFalse(driver.getPageSource().contains("HTTP Status 403 – Forbidden"));
 	}
+
+	@Test
+	public void testSignupLoginFlow() {
+		// Visit home page without login, redirect to login page
+		String homePageUrl = "http://localhost:" + this.port + "/home";
+		driver.get(homePageUrl);
+		Assertions.assertEquals("Login", driver.getTitle());
+
+		// Signup and login, visit home page again
+		doMockSignUp("SignupLoginFlow","Test","SLF","123");
+		doLogIn("SLF", "123");
+		driver.get(homePageUrl);
+		Assertions.assertEquals("Home", driver.getTitle());
+
+		// Logout, visit home page again
+		Duration durationSeconds = Duration.ofSeconds(2);
+		WebDriverWait webDriverWait = new WebDriverWait(driver, durationSeconds);
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("logoutDiv")));
+		WebElement logoutDiv = driver.findElement(By.id("logoutDiv"));
+		WebElement logoutButton = logoutDiv.findElement(By.tagName("button"));
+		logoutButton.click();
+		driver.get(homePageUrl);
+		Assertions.assertEquals("Login", driver.getTitle());
+	}
 }
