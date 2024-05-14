@@ -226,4 +226,55 @@ class CloudStorageApplicationTests {
 		driver.get(homePageUrl);
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
+
+	@Test
+	public void testAddNewNote() {
+		// Create a test account
+		doMockSignUp("Note Management","Test","NMT","123");
+		doLogIn("NMT", "123");
+
+		// Try to create new note
+		Duration durationSeconds = Duration.ofSeconds(2);
+		WebDriverWait webDriverWait = new WebDriverWait(driver, durationSeconds);
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes-tab")));
+		WebElement navTab = driver.findElement(By.id("nav-notes-tab"));
+		navTab.click(); // switch to Notes tab
+
+		// fill in form data
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("nav-notes")));
+		WebElement navTabDiv = driver.findElement(By.id("nav-notes"));
+		WebElement showModalButton = navTabDiv.findElement(By.xpath("//button[contains(text(), 'Add a New Note')]"));
+		showModalButton.click();
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-title")));
+		WebElement noteTitle = driver.findElement(By.id("note-title"));
+		String testNoteTitle = "Create note";
+		noteTitle.sendKeys(testNoteTitle);
+
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement noteDescription = driver.findElement(By.id("note-description"));
+		String testNoteDescription = "note description testing";
+		noteDescription.sendKeys(testNoteDescription);
+
+		// submit form data
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("note-description")));
+		WebElement noteModal = driver.findElement(By.id("noteModal"));
+		WebElement saveButton = noteModal.findElement(By.xpath("//button[contains(text(), 'Save changes')]"));
+		saveButton.click();
+
+		// check success page
+		Assertions.assertEquals("Result", driver.getTitle());
+		WebElement continueLink = driver.findElement(By.xpath("//a[contains(text(), 'here')]"));
+		continueLink.click(); // back to home page
+
+		// check new record show in the list
+		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("noteTable")));
+		WebElement noteTable = driver.findElement(By.id("noteTable"));
+		String thXpath = String.format("//th[contains(text(), '%s')]", testNoteTitle);
+		WebElement th = noteTable.findElement(By.xpath(thXpath));
+		String tdXpath = String.format("//td[contains(text(), '%s')]", testNoteDescription);
+		WebElement td = noteTable.findElement(By.xpath(tdXpath));
+		Assertions.assertEquals(th.getText(), testNoteTitle);
+		Assertions.assertEquals(td.getText(), testNoteDescription);
+	}
 }
