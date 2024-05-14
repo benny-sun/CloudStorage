@@ -31,13 +31,17 @@ public class NoteModal {
         saveButton.click();
     }
 
-    public void setNoteTitle(String title) {
+    public NoteModal setNoteTitle(String title) {
         wait.until(ExpectedConditions.visibilityOf(noteTitleInput));
         noteTitleInput.sendKeys(title);
+
+        return this;
     }
 
-    public void setNoteDescription(String description) {
+    public NoteModal setNoteDescription(String description) {
         wait.until(ExpectedConditions.visibilityOf(noteDescriptionInput));
         noteDescriptionInput.sendKeys(description);
+
+        return this;
     }
 }

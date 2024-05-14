@@ -247,13 +247,16 @@ class CloudStorageApplicationTests {
 		Assertions.assertThrows(NoSuchElementException.class, () -> homePage.getNoteTitle(testNoteTitle));
 		Assertions.assertThrows(NoSuchElementException.class, () -> homePage.getNoteDescription(testNoteDescription));
 		
+		// popup note form
+		NoteModal noteModal = homePage
+				.clickNotesTab()
+				.clickAddNoteButton()
+				.getNoteModal();
+
 		// fill form data
-		homePage.clickNotesTab();
-		homePage.clickAddNoteButton();
-		NoteModal noteModal = homePage.getNoteModal();
-		noteModal.setNoteTitle(testNoteTitle);
-		noteModal.setNoteDescription(testNoteDescription);
-		noteModal.submit();
+		noteModal.setNoteTitle(testNoteTitle)
+				.setNoteDescription(testNoteDescription)
+				.submit();
 
 		// check success page
 		Assertions.assertEquals("Result", driver.getTitle());

@@ -38,18 +38,22 @@ public class HomePage {
         filesTab.click();
     }
 
-    public void clickNotesTab() {
+    public HomePage clickNotesTab() {
         wait.until(ExpectedConditions.visibilityOf(notesTab));
         notesTab.click();
+
+        return this;
     }
 
     public void clickCredentialsTab() {
         credentialsTab.click();
     }
 
-    public void clickAddNoteButton() {
+    public HomePage clickAddNoteButton() {
         wait.until(ExpectedConditions.elementToBeClickable(addNoteButton));
         addNoteButton.click();
+
+        return this;
     }
 
     public NoteModal getNoteModal() {
