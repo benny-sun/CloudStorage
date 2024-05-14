@@ -137,7 +137,7 @@
                                 <tr th:each="credential: ${credentials}">
                                     <td>
                                         <button type="button" class="btn btn-success" th:attr="data-credentialId=${credential.credentialId}, data-url=${credential.url}, data-username=${credential.username}, data-password=${credential.decodedPassword}" onclick="showCredentialModal(this)">Edit</button>
-                                        <a class="btn btn-danger">Delete</a>
+                                        <a class="btn btn-danger" data-tab="nav-credentials" data-method="delete" th:href="@{'/credentials/' + ${credential.credentialId}}" onclick="deleteItem(event)">Delete</a>
                                     </td>
                                     <th scope="row" th:text="${credential.url}"></th>
                                     <td th:text="${credential.username}"></td>

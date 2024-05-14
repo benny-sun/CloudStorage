@@ -3,13 +3,11 @@ package com.udacity.jwdnd.c1.cloudstorage.controllers;
 import com.udacity.jwdnd.c1.cloudstorage.models.Credential;
 import com.udacity.jwdnd.c1.cloudstorage.models.User;
 import com.udacity.jwdnd.c1.cloudstorage.services.CredentialService;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/credentials")
@@ -63,5 +61,15 @@ public class CredentialController {
         model.addAttribute("errorMessage", errorMessage);
 
         return "result";
+    }
+
+    @DeleteMapping("/{credentialId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+            @PathVariable("credentialId") Integer credentialId,
+            Authentication auth
+    ) {
+        Integer userId = ((User) auth.getPrincipal()).getUserId();
+        credentialService.delete(credentialId, userId);
     }
 }
