@@ -73,7 +73,7 @@ public class NoteTabPanel {
     public void acceptConfirm() {
         wait.until(ExpectedConditions.alertIsPresent());
         driver.switchTo().alert().accept();
-        // frontend use ajax to delete record, to prevent StaleElementReferenceException
+        // frontend uses ajax to delete records, so add this line to avoid StaleElementReferenceException.
         wait.until(ExpectedConditions.stalenessOf(targetDeleteButton));
     }
 

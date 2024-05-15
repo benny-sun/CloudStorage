@@ -299,9 +299,6 @@ class CloudStorageApplicationTests {
 				.submit();
 
 		// check success page
-		Duration duration = Duration.ofSeconds(2);
-		WebDriverWait webDriverWait = new WebDriverWait(driver, duration);
-		webDriverWait.until(ExpectedConditions.titleContains("Result"));
 		Assertions.assertEquals("Result", driver.getTitle());
 		ResultPage resultPage = new ResultPage(driver);
 		resultPage.clickContinueLink();
