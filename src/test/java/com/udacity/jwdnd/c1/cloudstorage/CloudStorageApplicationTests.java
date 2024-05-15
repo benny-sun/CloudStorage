@@ -2,6 +2,7 @@ package com.udacity.jwdnd.c1.cloudstorage;
 
 import com.udacity.jwdnd.c1.cloudstorage.pages.HomePage;
 import com.udacity.jwdnd.c1.cloudstorage.pages.ResultPage;
+import com.udacity.jwdnd.c1.cloudstorage.pages.sections.CredentialForm;
 import com.udacity.jwdnd.c1.cloudstorage.pages.sections.CredentialTabPanel;
 import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteForm;
 import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteTabPanel;
@@ -352,6 +353,7 @@ class CloudStorageApplicationTests {
 
 		// run feature test
 		testAddNewCredential(addedUrl, addedUsername, addedPassword);
+		testEditCredential(addedUrl, editedUrl, addedUsername, editedUsername, addedPassword, editedPassword);
 	}
 
 	private void testAddNewCredential(String newUrl, String newUsername, String newPassword) {
@@ -379,5 +381,43 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals(newUrl, credentialTabPanel.getUrl(newUrl));
 		Assertions.assertEquals(newUsername, credentialTabPanel.getUsername(newUsername));
 		Assertions.assertNotEquals(newPassword, credentialTabPanel.getPassword(newUsername));
+	}
+
+	private void testEditCredential(
+			String addedUrl,
+			String editedUrl,
+			String addedUsername,
+			String editedUsername,
+			String addedPassword,
+			String editedPassword
+	) {
+		// arrange
+		HomePage homePage = new HomePage(driver, 2);
+		CredentialTabPanel credentialTabPanel = homePage.clickCredentialsTab();
+		CredentialForm credentialForm = credentialTabPanel.clickEditButton(addedUrl);
+
+		// check new record in the list same as edit input fields
+		Assertions.assertEquals(addedUrl, credentialForm.getUrl());
+		Assertions.assertEquals(addedUsername, credentialForm.getUsername());
+		Assertions.assertEquals(addedPassword, credentialForm.getPassword());
+
+		// edit input fields
+		credentialForm
+				.setUrl(editedUrl)
+				.setUsername(editedUsername)
+				.setPassword(editedPassword)
+				.submit();
+
+		// check success page
+		Assertions.assertEquals("Result", driver.getTitle());
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.clickContinueLink();
+
+		// check edited result
+		credentialForm = credentialTabPanel.clickEditButton(editedUrl);
+		Assertions.assertEquals(editedUrl, credentialForm.getUrl());
+		Assertions.assertEquals(editedUsername, credentialForm.getUsername());
+		Assertions.assertEquals(editedPassword, credentialForm.getPassword());
+		credentialForm.close();
 	}
 }

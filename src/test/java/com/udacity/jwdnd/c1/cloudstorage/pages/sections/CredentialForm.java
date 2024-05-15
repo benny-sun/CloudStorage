@@ -71,6 +71,7 @@ public class CredentialForm {
     public void submit() {
         wait.until(ExpectedConditions.elementToBeClickable(saveButton));
         saveButton.click();
+        wait.until(ExpectedConditions.titleIs("Result"));
     }
 
     public void close() {
