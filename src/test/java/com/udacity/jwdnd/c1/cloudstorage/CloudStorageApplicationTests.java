@@ -1,8 +1,8 @@
 package com.udacity.jwdnd.c1.cloudstorage;
 
 import com.udacity.jwdnd.c1.cloudstorage.pages.HomePage;
-import com.udacity.jwdnd.c1.cloudstorage.pages.NoteModal;
 import com.udacity.jwdnd.c1.cloudstorage.pages.ResultPage;
+import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteTabPanel;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.By;
@@ -238,25 +238,20 @@ class CloudStorageApplicationTests {
 		doLogIn("NMT", "123");
 
 		// init testing data
-		String testNoteTitle = "note title";
-		String testNoteDescription = "note description testing";
+		String testTitle = "note title";
+		String testDescription = "note description testing";
 
 		// check new record does not in the list
 		HomePage homePage = new HomePage(driver, 2);
-		homePage.clickNotesTab();
-		Assertions.assertThrows(NoSuchElementException.class, () -> homePage.getNoteTitle(testNoteTitle));
-		Assertions.assertThrows(NoSuchElementException.class, () -> homePage.getNoteDescription(testNoteDescription));
+        NoteTabPanel noteTabPanel = homePage.clickNotesTab();
+		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getTitle(testTitle));
+		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getDescription(testDescription));
 		
-		// popup note form
-		NoteModal noteModal = homePage
-				.clickNotesTab()
-				.clickAddNoteButton()
-				.getNoteModal();
-
-		// fill form data
-		noteModal.setNoteTitle(testNoteTitle)
-				.setNoteDescription(testNoteDescription)
-				.submit();
+		// popup note form, fill form data
+		noteTabPanel.clickAddButton()
+                .setTitle(testTitle)
+                .setDescription(testDescription)
+                .submit();
 
 		// check success page
 		Assertions.assertEquals("Result", driver.getTitle());
@@ -264,9 +259,7 @@ class CloudStorageApplicationTests {
 		resultPage.clickContinueLink();
 
 		// check new record in the list
-		WebElement elNoteTitle = homePage.getNoteTitle(testNoteTitle);
-		WebElement elNoteDescription = homePage.getNoteDescription(testNoteDescription);
-		Assertions.assertEquals(elNoteTitle.getText(), testNoteTitle);
-		Assertions.assertEquals(elNoteDescription.getText(), testNoteDescription);
+		Assertions.assertEquals(noteTabPanel.getTitle(testTitle), testTitle);
+		Assertions.assertEquals(noteTabPanel.getDescription(testDescription), testDescription);
 	}
 }

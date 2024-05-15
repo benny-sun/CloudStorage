@@ -1,6 +1,6 @@
 package com.udacity.jwdnd.c1.cloudstorage.pages;
 
-import org.openqa.selenium.By;
+import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteTabPanel;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -11,64 +11,36 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import java.time.Duration;
 
 public class HomePage {
-
     @FindBy(id = "nav-files-tab")
     private WebElement filesTab;
+    @FindBy(id = "nav-notes-tab")
+    private WebElement notesTab;
     @FindBy(id = "nav-credentials-tab")
     private WebElement credentialsTab;
 
-    @FindBy(id = "nav-notes-tab")
-    private WebElement notesTab;
-    @FindBy(xpath = "//div[@id='nav-notes']//button[contains(text(), 'Add a New Note')]")
-    private WebElement addNoteButton;
-    private NoteModal noteModal;
-    @FindBy(id = "noteTable")
-    private WebElement noteTable;
+    private final NoteTabPanel noteTabPanel;
 
-    private WebDriverWait wait;
+    private final WebDriverWait wait;
 
     public HomePage(WebDriver driver, int waitSecond) {
         PageFactory.initElements(driver, this);
         Duration duration = Duration.ofSeconds(waitSecond);
         wait = new WebDriverWait(driver, duration);
-        noteModal = new NoteModal(driver, waitSecond);
+        noteTabPanel = new NoteTabPanel(driver, wait);
     }
 
     public void clickFilesTab() {
         filesTab.click();
     }
 
-    public HomePage clickNotesTab() {
+    public NoteTabPanel clickNotesTab() {
         wait.until(ExpectedConditions.visibilityOf(notesTab));
         notesTab.click();
 
-        return this;
+        return noteTabPanel;
     }
 
     public void clickCredentialsTab() {
         credentialsTab.click();
-    }
-
-    public HomePage clickAddNoteButton() {
-        wait.until(ExpectedConditions.elementToBeClickable(addNoteButton));
-        addNoteButton.click();
-
-        return this;
-    }
-
-    public NoteModal getNoteModal() {
-        return noteModal;
-    }
-
-    public WebElement getNoteTitle(String text) {
-        String xpath = String.format("//th[contains(text(), '%s')]", text);
-
-        return noteTable.findElement(By.xpath(xpath));
-    }
-
-    public WebElement getNoteDescription(String text) {
-        String xpath = String.format("//td[contains(text(), '%s')]", text);
-
-        return noteTable.findElement(By.xpath(xpath));
     }
 }
