@@ -354,6 +354,7 @@ class CloudStorageApplicationTests {
 		// run feature test
 		testAddNewCredential(addedUrl, addedUsername, addedPassword);
 		testEditCredential(addedUrl, editedUrl, addedUsername, editedUsername, addedPassword, editedPassword);
+		testDeleteCredential(editedUrl, editedUsername);
 	}
 
 	private void testAddNewCredential(String newUrl, String newUsername, String newPassword) {
@@ -419,5 +420,29 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals(editedUsername, credentialForm.getUsername());
 		Assertions.assertEquals(editedPassword, credentialForm.getPassword());
 		credentialForm.close();
+	}
+
+	private void testDeleteCredential(String targetUrl, String targetUsername) {
+		// arrange
+		HomePage homePage = new HomePage(driver, 5);
+
+		// click delete button but dismiss confirm
+		homePage.clickCredentialsTab()
+				.clickDeleteButton(targetUrl)
+				.cancelConfirm();
+
+		// check record still exist
+		CredentialTabPanel credentialTabPanel = homePage.clickCredentialsTab();
+		Assertions.assertEquals(targetUrl, credentialTabPanel.getUrl(targetUrl));
+		Assertions.assertEquals(targetUsername, credentialTabPanel.getUsername(targetUsername));
+
+		// click delete button and accept confirm
+		homePage.clickCredentialsTab()
+				.clickDeleteButton(targetUrl)
+				.acceptConfirm();
+
+		// check record already deleted (re-retrieve the elements to avoid StaleElementReferenceException)
+		Assertions.assertThrows(NoSuchElementException.class, () -> credentialTabPanel.getUrl(targetUrl));
+		Assertions.assertThrows(NoSuchElementException.class, () -> credentialTabPanel.getUsername(targetUsername));
 	}
 }
