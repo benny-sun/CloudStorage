@@ -2,6 +2,7 @@ package com.udacity.jwdnd.c1.cloudstorage;
 
 import com.udacity.jwdnd.c1.cloudstorage.pages.HomePage;
 import com.udacity.jwdnd.c1.cloudstorage.pages.ResultPage;
+import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteForm;
 import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteTabPanel;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
@@ -232,7 +233,7 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void testAddNewNote() {
+	public void testNoteManagement() {
 		// Create a test account
 		doMockSignUp("Note Management","Test","NMT","123");
 		doLogIn("NMT", "123");
@@ -241,9 +242,17 @@ class CloudStorageApplicationTests {
 		String testTitle = "note title";
 		String testDescription = "note description testing";
 
-		// check new record does not in the list
+		// run feature test
+		testAddNewNote(testTitle, testDescription);
+		testEditNote(testTitle, testDescription);
+	}
+
+	private void testAddNewNote(String testTitle, String testDescription) {
+		// arrange
 		HomePage homePage = new HomePage(driver, 2);
         NoteTabPanel noteTabPanel = homePage.clickNotesTab();
+
+		// check new record does not in the list
 		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getTitle(testTitle));
 		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getDescription(testDescription));
 		
@@ -259,7 +268,39 @@ class CloudStorageApplicationTests {
 		resultPage.clickContinueLink();
 
 		// check new record in the list
-		Assertions.assertEquals(noteTabPanel.getTitle(testTitle), testTitle);
-		Assertions.assertEquals(noteTabPanel.getDescription(testDescription), testDescription);
+		Assertions.assertEquals(testTitle, noteTabPanel.getTitle(testTitle));
+		Assertions.assertEquals(testDescription, noteTabPanel.getDescription(testDescription));
+	}
+
+	private void testEditNote(String testTitle, String testDescription) {
+		// arrange
+		HomePage homePage = new HomePage(driver, 2);
+		NoteTabPanel noteTabPanel = homePage.clickNotesTab();
+		NoteForm noteForm = noteTabPanel.clickEditButton(testTitle);
+
+		// check new record in the list same as edit input fields
+		Assertions.assertEquals(testTitle, noteForm.getTitle());
+		Assertions.assertEquals(testDescription, noteForm.getDescription());
+
+		// edit input fields
+		String newTitle = "edited note title";
+		String newDescription = "edited note description";
+		noteForm
+				.setTitle(newTitle)
+				.setDescription(newDescription)
+				.submit();
+
+		// check success page
+		Duration durationSeconds = Duration.ofSeconds(2);
+		WebDriverWait webDriverWait = new WebDriverWait(driver, durationSeconds);
+		webDriverWait.until(ExpectedConditions.titleContains("Result"));
+		Assertions.assertEquals("Result", driver.getTitle());
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.clickContinueLink();
+
+		// check edited result
+		noteForm = noteTabPanel.clickEditButton(newTitle);
+		Assertions.assertEquals(newTitle, noteForm.getTitle());
+		Assertions.assertEquals(newDescription, noteForm.getDescription());
 	}
 }

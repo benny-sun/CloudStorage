@@ -38,6 +38,7 @@ public class NoteForm {
 
     public NoteForm setTitle(String title) {
         wait.until(ExpectedConditions.visibilityOf(titleInput));
+        titleInput.clear();
         titleInput.sendKeys(title);
 
         return this;
@@ -45,6 +46,7 @@ public class NoteForm {
 
     public NoteForm setDescription(String description) {
         wait.until(ExpectedConditions.visibilityOf(descriptionInput));
+        descriptionInput.clear();
         descriptionInput.sendKeys(description);
 
         return this;
