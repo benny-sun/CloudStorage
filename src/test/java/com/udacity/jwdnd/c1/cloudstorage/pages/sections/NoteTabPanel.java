@@ -13,12 +13,15 @@ public class NoteTabPanel {
     private WebElement noteTable;
     @FindBy(xpath = "//div[@id='nav-notes']//button[contains(text(), 'Add a New Note')]")
     private WebElement addNoteButton;
+    private WebElement targetDeleteButton;
 
     private final NoteForm noteForm;
 
+    private final WebDriver driver;
     private final WebDriverWait wait;
 
     public NoteTabPanel(WebDriver driver, WebDriverWait wait) {
+        this.driver = driver;
         this.wait = wait;
         PageFactory.initElements(driver, this);
         noteForm = new NoteForm(driver, wait);
@@ -50,5 +53,32 @@ public class NoteTabPanel {
         editButton.click();
 
         return noteForm;
+    }
+
+    public NoteTabPanel clickDeleteButton(String title) {
+        String cssSelector = String.format("button[data-noteTitle='%s'] + a.btn.btn-danger[data-method='delete']", title);
+        WebElement deleteButton = noteTable.findElement(By.cssSelector(cssSelector));
+        wait.until(ExpectedConditions.elementToBeClickable(deleteButton));
+        deleteButton.click();
+
+        setTargetDeleteButton(deleteButton);
+
+        return this;
+    }
+
+    private void setTargetDeleteButton(WebElement button) {
+        targetDeleteButton = button;
+    }
+
+    public void acceptConfirm() {
+        wait.until(ExpectedConditions.alertIsPresent());
+        driver.switchTo().alert().accept();
+        // frontend use ajax to delete record, to prevent StaleElementReferenceException
+        wait.until(ExpectedConditions.stalenessOf(targetDeleteButton));
+    }
+
+    public void cancelConfirm() {
+        wait.until(ExpectedConditions.alertIsPresent());
+        driver.switchTo().alert().dismiss();
     }
 }

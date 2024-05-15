@@ -239,27 +239,30 @@ class CloudStorageApplicationTests {
 		doLogIn("NMT", "123");
 
 		// init testing data
-		String testTitle = "note title";
-		String testDescription = "note description testing";
+		String addedTitle = "note title";
+		String editedTitle = "edited note title";
+		String addedDescription = "note description testing";
+		String editedDescription = "edited note description";
 
 		// run feature test
-		testAddNewNote(testTitle, testDescription);
-		testEditNote(testTitle, testDescription);
+		testAddNewNote(addedTitle, addedDescription);
+		testEditNote(addedTitle, editedTitle, addedDescription, editedDescription);
+		testDeleteNote(editedTitle, editedDescription);
 	}
 
-	private void testAddNewNote(String testTitle, String testDescription) {
+	private void testAddNewNote(String newTitle, String newDescription) {
 		// arrange
 		HomePage homePage = new HomePage(driver, 2);
         NoteTabPanel noteTabPanel = homePage.clickNotesTab();
 
 		// check new record does not in the list
-		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getTitle(testTitle));
-		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getDescription(testDescription));
+		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getTitle(newTitle));
+		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getDescription(newDescription));
 		
 		// popup note form, fill form data
 		noteTabPanel.clickAddButton()
-                .setTitle(testTitle)
-                .setDescription(testDescription)
+                .setTitle(newTitle)
+                .setDescription(newDescription)
                 .submit();
 
 		// check success page
@@ -268,39 +271,67 @@ class CloudStorageApplicationTests {
 		resultPage.clickContinueLink();
 
 		// check new record in the list
-		Assertions.assertEquals(testTitle, noteTabPanel.getTitle(testTitle));
-		Assertions.assertEquals(testDescription, noteTabPanel.getDescription(testDescription));
+		Assertions.assertEquals(newTitle, noteTabPanel.getTitle(newTitle));
+		Assertions.assertEquals(newDescription, noteTabPanel.getDescription(newDescription));
 	}
 
-	private void testEditNote(String testTitle, String testDescription) {
+	private void testEditNote(
+			String addedTitle,
+			String editedTitle,
+			String addedDescription,
+			String editedDescription
+	) {
 		// arrange
 		HomePage homePage = new HomePage(driver, 2);
 		NoteTabPanel noteTabPanel = homePage.clickNotesTab();
-		NoteForm noteForm = noteTabPanel.clickEditButton(testTitle);
+		NoteForm noteForm = noteTabPanel.clickEditButton(addedTitle);
 
 		// check new record in the list same as edit input fields
-		Assertions.assertEquals(testTitle, noteForm.getTitle());
-		Assertions.assertEquals(testDescription, noteForm.getDescription());
+		Assertions.assertEquals(addedTitle, noteForm.getTitle());
+		Assertions.assertEquals(addedDescription, noteForm.getDescription());
 
 		// edit input fields
-		String newTitle = "edited note title";
-		String newDescription = "edited note description";
 		noteForm
-				.setTitle(newTitle)
-				.setDescription(newDescription)
+				.setTitle(editedTitle)
+				.setDescription(editedDescription)
 				.submit();
 
 		// check success page
-		Duration durationSeconds = Duration.ofSeconds(2);
-		WebDriverWait webDriverWait = new WebDriverWait(driver, durationSeconds);
+		Duration duration = Duration.ofSeconds(2);
+		WebDriverWait webDriverWait = new WebDriverWait(driver, duration);
 		webDriverWait.until(ExpectedConditions.titleContains("Result"));
 		Assertions.assertEquals("Result", driver.getTitle());
 		ResultPage resultPage = new ResultPage(driver);
 		resultPage.clickContinueLink();
 
 		// check edited result
-		noteForm = noteTabPanel.clickEditButton(newTitle);
-		Assertions.assertEquals(newTitle, noteForm.getTitle());
-		Assertions.assertEquals(newDescription, noteForm.getDescription());
+		noteForm = noteTabPanel.clickEditButton(editedTitle);
+		Assertions.assertEquals(editedTitle, noteForm.getTitle());
+		Assertions.assertEquals(editedDescription, noteForm.getDescription());
+		noteForm.close();
 	}
+
+	private void testDeleteNote(String targetTitle, String targetDescription) {
+		// arrange
+		HomePage homePage = new HomePage(driver, 5);
+
+		// click delete button but dismiss confirm
+		homePage.clickNotesTab()
+				.clickDeleteButton(targetTitle)
+				.cancelConfirm();
+
+		// check record still exist
+		NoteTabPanel noteTabPanel = homePage.clickNotesTab();
+		Assertions.assertEquals(targetTitle, noteTabPanel.getTitle(targetTitle));
+		Assertions.assertEquals(targetDescription, noteTabPanel.getDescription(targetDescription));
+
+		// click delete button and accept confirm
+		homePage.clickNotesTab()
+				.clickDeleteButton(targetTitle)
+				.acceptConfirm();
+
+		// check record already deleted (re-retrieve the elements to avoid StaleElementReferenceException)
+		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getTitle(targetTitle));
+		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getDescription(targetDescription));
+    }
 }
