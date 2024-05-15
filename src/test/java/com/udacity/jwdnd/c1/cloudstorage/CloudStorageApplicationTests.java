@@ -2,6 +2,7 @@ package com.udacity.jwdnd.c1.cloudstorage;
 
 import com.udacity.jwdnd.c1.cloudstorage.pages.HomePage;
 import com.udacity.jwdnd.c1.cloudstorage.pages.ResultPage;
+import com.udacity.jwdnd.c1.cloudstorage.pages.sections.CredentialTabPanel;
 import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteForm;
 import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteTabPanel;
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -334,4 +335,49 @@ class CloudStorageApplicationTests {
 		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getTitle(targetTitle));
 		Assertions.assertThrows(NoSuchElementException.class, () -> noteTabPanel.getDescription(targetDescription));
     }
+
+	@Test
+	public void testCredentialManagement() {
+		// Create a test account
+		doMockSignUp("Credential Management","Test","CMT","123");
+		doLogIn("CMT", "123");
+
+		// init testing data
+		String addedUrl = "https://learn.udacity.com/";
+		String editedUrl = "https://github.com/";
+		String addedUsername = "udacity";
+		String editedUsername = "benny";
+		String addedPassword = "jxtnXpzu3Xn7uPX4";
+		String editedPassword = "RS6dLHfHQ7X8YVjH";
+
+		// run feature test
+		testAddNewCredential(addedUrl, addedUsername, addedPassword);
+	}
+
+	private void testAddNewCredential(String newUrl, String newUsername, String newPassword) {
+		// arrange
+		HomePage homePage = new HomePage(driver, 2);
+		CredentialTabPanel credentialTabPanel = homePage.clickCredentialsTab();
+
+		// check new record does not in the list
+		Assertions.assertThrows(NoSuchElementException.class, () -> credentialTabPanel.getUrl(newUrl));
+		Assertions.assertThrows(NoSuchElementException.class, () -> credentialTabPanel.getUsername(newUsername));
+
+		// popup form and fill form data
+		credentialTabPanel.clickAddButton()
+				.setUrl(newUrl)
+				.setUsername(newUsername)
+				.setPassword(newPassword)
+				.submit();
+
+		// check success page
+		Assertions.assertEquals("Result", driver.getTitle());
+		ResultPage resultPage = new ResultPage(driver);
+		resultPage.clickContinueLink();
+
+		// check new record in the list
+		Assertions.assertEquals(newUrl, credentialTabPanel.getUrl(newUrl));
+		Assertions.assertEquals(newUsername, credentialTabPanel.getUsername(newUsername));
+		Assertions.assertNotEquals(newPassword, credentialTabPanel.getPassword(newUsername));
+	}
 }

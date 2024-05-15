@@ -1,5 +1,6 @@
 package com.udacity.jwdnd.c1.cloudstorage.pages;
 
+import com.udacity.jwdnd.c1.cloudstorage.pages.sections.CredentialTabPanel;
 import com.udacity.jwdnd.c1.cloudstorage.pages.sections.NoteTabPanel;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -19,6 +20,7 @@ public class HomePage {
     private WebElement credentialsTab;
 
     private final NoteTabPanel noteTabPanel;
+    private final CredentialTabPanel credentialTabPanel;
 
     private final WebDriverWait wait;
 
@@ -26,7 +28,9 @@ public class HomePage {
         PageFactory.initElements(driver, this);
         Duration duration = Duration.ofSeconds(waitSecond);
         wait = new WebDriverWait(driver, duration);
+
         noteTabPanel = new NoteTabPanel(driver, wait);
+        credentialTabPanel = new CredentialTabPanel(driver, wait);
     }
 
     public void clickFilesTab() {
@@ -40,7 +44,10 @@ public class HomePage {
         return noteTabPanel;
     }
 
-    public void clickCredentialsTab() {
+    public CredentialTabPanel clickCredentialsTab() {
+        wait.until(ExpectedConditions.visibilityOf(credentialsTab));
         credentialsTab.click();
+
+        return credentialTabPanel;
     }
 }
