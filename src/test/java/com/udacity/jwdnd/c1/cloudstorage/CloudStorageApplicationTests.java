@@ -17,9 +17,11 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
+import java.io.IOException;
 import java.time.Duration;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -186,7 +188,7 @@ class CloudStorageApplicationTests {
 	 * https://spring.io/guides/gs/uploading-files/ under the "Tuning File Upload Limits" section.
 	 */
 	@Test
-	public void testLargeUpload() {
+	public void testLargeUpload() throws IOException {
 		// Create a test account
 		doMockSignUp("Large File","Test","LFT","123");
 		doLogIn("LFT", "123");
@@ -194,11 +196,12 @@ class CloudStorageApplicationTests {
 		// Try to upload an arbitrary large file
 		Duration durationSeconds = Duration.ofSeconds(2);
 		WebDriverWait webDriverWait = new WebDriverWait(driver, durationSeconds);
-		String fileName = "upload5m.zip";
+		String fileName = "test/upload5m.zip";
+		Resource resource = new ClassPathResource(fileName);
 
 		webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.id("fileUpload")));
 		WebElement fileSelectButton = driver.findElement(By.id("fileUpload"));
-		fileSelectButton.sendKeys(new File(fileName).getAbsolutePath());
+		fileSelectButton.sendKeys(resource.getFile().getAbsolutePath());
 
 		WebElement uploadButton = driver.findElement(By.id("uploadButton"));
 		uploadButton.click();
